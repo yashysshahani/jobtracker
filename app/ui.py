@@ -377,27 +377,29 @@ with tab_analytics:
     try:
         weekly_apps = weekly_applications(df_edit)
 
+        with col1:
+            with st.container(border=True):
+                st.subheader("Weekly volume")
+                st.line_chart(data=weekly_apps, x="week_start")
+
+
+            with st.container(border=True):
+                st.subheader("Top roles applied to")
+                all_rows = list_applications_df(limit=10000)
+                top_terms = top_role_terms(all_rows, n=25, ngram_range=(2, 3))
+
+                plot = st.altair_chart(
+                alt.Chart(top_terms).mark_bar().encode(
+                    x=alt.X('term:N', sort=top_terms['term'].tolist()),
+                    y='count:Q'
+                ),
+                use_container_width=True
+            )
+
     except NameError:
         st.write("Add a job to view analytics")
 
-    with col1:
-        with st.container(border=True):
-            st.subheader("Weekly volume")
-            st.line_chart(data=weekly_apps, x="week_start")
 
-
-        with st.container(border=True):
-            st.subheader("Top roles applied to")
-            all_rows = list_applications_df(limit=10000)
-            top_terms = top_role_terms(all_rows, n=25, ngram_range=(2, 3))
-
-            plot = st.altair_chart(
-            alt.Chart(top_terms).mark_bar().encode(
-                x=alt.X('term:N', sort=top_terms['term'].tolist()),
-                y='count:Q'
-            ),
-            use_container_width=True
-        )
 
 
 
