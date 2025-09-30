@@ -396,63 +396,65 @@ with tab_analytics:
                 use_container_width=True
             )
 
-    except NameError:
+        # Heatmap
+        n_days = 175
+        today = pd.Timestamp.today().normalize()
+        start = today - pd.Timedelta(days=n_days - 1)
+
+        all_rows = list_applications_df(
+            limit=10000,
+            date_start=start.date(),
+            date_end=today.date()
+        )
+
+        cal_counts = calendar_counts(all_rows, n_days)
+
+        mat = cal_counts.pivot(index="dow", columns="week_idx", values="n").fillna(0)
+
+        fig = px.imshow(mat, origin="upper", aspect="equal", labels=dict(color="Apps/day"), color_continuous_scale='speed')
+        fig.update_yaxes(tickmode="array", tickvals=[0, 1, 2, 3, 4, 5, 6],
+                        ticktext=["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
+
+
+        date_mat = cal_counts.pivot(index="dow", columns="week_idx", values="date")
+        date_mat = date_mat.astype(str)
+
+        fig.update_traces(
+            customdata=date_mat.values,
+            hovertemplate="%{customdata}<br>Apps: %{z}<extra></extra>",
+            showlegend=False
+        )
+
+        tickvals, ticktext = calendar_month_ticks(cal_counts)
+        fig.update_xaxes(tickmode="array", tickvals=tickvals, ticktext=ticktext)
+        fig.layout.coloraxis.showscale = False
+
+        with col2:
+            with st.container(border=True):
+                st.subheader("Calendar")
+                st.plotly_chart(fig)
+
+            
+            with st.container(border=True):
+                st.subheader("Top companies applied to")
+                top_comp = top_companies(df_edit, 15)
+                top_comp = top_comp.sort_values(by="Apps", ascending=False)
+
+                plot = st.altair_chart(
+                    alt.Chart(top_comp).mark_bar().encode(
+                    x=alt.X('Company:N', sort=top_comp['Apps'].tolist()),
+                    y='Apps:Q'
+                ),
+                use_container_width=True
+            )
+
+    except NameError or KeyError:
         st.write("Add a job to view analytics")
 
 
 
 
 
-    # Heatmap
-    n_days = 175
-    today = pd.Timestamp.today().normalize()
-    start = today - pd.Timedelta(days=n_days - 1)
-
-    all_rows = list_applications_df(
-        limit=10000,
-        date_start=start.date(),
-        date_end=today.date()
-    )
-
-    cal_counts = calendar_counts(all_rows, n_days)
-
-    mat = cal_counts.pivot(index="dow", columns="week_idx", values="n").fillna(0)
-
-    fig = px.imshow(mat, origin="upper", aspect="equal", labels=dict(color="Apps/day"), color_continuous_scale='speed')
-    fig.update_yaxes(tickmode="array", tickvals=[0, 1, 2, 3, 4, 5, 6],
-                    ticktext=["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
-
-
-    date_mat = cal_counts.pivot(index="dow", columns="week_idx", values="date")
-    date_mat = date_mat.astype(str)
-
-    fig.update_traces(
-        customdata=date_mat.values,
-        hovertemplate="%{customdata}<br>Apps: %{z}<extra></extra>",
-        showlegend=False
-    )
-
-    tickvals, ticktext = calendar_month_ticks(cal_counts)
-    fig.update_xaxes(tickmode="array", tickvals=tickvals, ticktext=ticktext)
-    fig.layout.coloraxis.showscale = False
-
-    with col2:
-        with st.container(border=True):
-            st.subheader("Calendar")
-            st.plotly_chart(fig)
-
-        
-        with st.container(border=True):
-            st.subheader("Top companies applied to")
-            top_comp = top_companies(df_edit, 15)
-            top_comp = top_comp.sort_values(by="Apps", ascending=False)
-
-            plot = st.altair_chart(
-                alt.Chart(top_comp).mark_bar().encode(
-                x=alt.X('Company:N', sort=top_comp['Apps'].tolist()),
-                y='Apps:Q'
-            ),
-            use_container_width=True
-        )
+    
     
 
