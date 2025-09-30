@@ -287,13 +287,15 @@ with tab_apps:
             disabled=export_df.empty,
         )
         
+        init_id_counter_if_missing(df_edit)
+
     except KeyError:
         st.write("Add your first job!")
         
 
 
 
-    init_id_counter_if_missing(df_edit)
+    
 
     def apply_changes(df_edit):
 
