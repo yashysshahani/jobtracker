@@ -239,20 +239,20 @@ with tab_apps:
 
     else:
         rows = list_applications_df(limit=None, status=status_filter, date_start=start_date, date_end=end_date, company_substr=company_filter)
-
-    rows["date_applied"] = pd.to_datetime(rows["date_applied"], errors="coerce").dt.strftime("%m/%d/%Y")
-    rows = rows.sort_values(["date_applied", "id"], ascending=[False, False], kind="mergesort")
-    rows = rows.reindex(columns=['id', 'company', "role", "date_applied", "status"])
-    rows["delete"] = False
-
-
-    rows["delete"] = False
-    if "apps_orig" not in st.session_state:
-        st.session_state["apps_orig"] = rows.copy(deep=True)
-
-    st.subheader("Recent applications")
-
     try:
+
+        rows["date_applied"] = pd.to_datetime(rows["date_applied"], errors="coerce").dt.strftime("%m/%d/%Y")
+        rows = rows.sort_values(["date_applied", "id"], ascending=[False, False], kind="mergesort")
+        rows = rows.reindex(columns=['id', 'company', "role", "date_applied", "status"])
+        rows["delete"] = False
+
+
+        rows["delete"] = False
+        if "apps_orig" not in st.session_state:
+            st.session_state["apps_orig"] = rows.copy(deep=True)
+
+        st.subheader("Recent applications")
+
         df_edit = st.data_editor(rows, hide_index=True, 
                     column_config={
                         "status": st.column_config.SelectboxColumn(
