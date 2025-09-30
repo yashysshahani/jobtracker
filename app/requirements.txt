@@ -3,3 +3,4 @@ pandas
 plotly
 streamlit-authenticator
 pyyaml
+playsound
