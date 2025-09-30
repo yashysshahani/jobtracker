@@ -252,30 +252,36 @@ with tab_apps:
 
     st.subheader("Recent applications")
 
-    df_edit = st.data_editor(rows, hide_index=True, 
-                column_config={
-                    "status": st.column_config.SelectboxColumn(
-                        "Status",
-                        help="Status of your application",
-                        options=[
-                            "Applied",
-                            "OA",
-                            "Interview",
-                            "Offer",
-                            "Rejected"
-                        ]
-                    ),
-                    "id": None,
-                    "company": "Company",
-                    "role": "Role",
-                    "date_applied": "Date Applied",
-                    "delete": st.column_config.CheckboxColumn(
-                        "Delete?",
-                    )
-                },
-                disabled=["id", "company", "role", "date_applied"])
-    
+    try:
+        df_edit = st.data_editor(rows, hide_index=True, 
+                    column_config={
+                        "status": st.column_config.SelectboxColumn(
+                            "Status",
+                            help="Status of your application",
+                            options=[
+                                "Applied",
+                                "OA",
+                                "Interview",
+                                "Offer",
+                                "Rejected"
+                            ]
+                        ),
+                        "id": None,
+                        "company": "Company",
+                        "role": "Role",
+                        "date_applied": "Date Applied",
+                        "delete": st.column_config.CheckboxColumn(
+                            "Delete?",
+                        )
+                    },
+                    disabled=["id", "company", "role", "date_applied"])
+        
+    except KeyError:
+        st.write("Add your first job!")
+        
     export_df = df_edit.drop(columns=["delete"], errors="ignore")
+
+
     st.download_button(
         label="Download current view (CSV)",
         data=export_df.to_csv(index=False).encode("utf-8"),
