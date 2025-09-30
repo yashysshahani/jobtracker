@@ -5,3 +5,4 @@ __pycache__/
 .streamlit/secrets.toml
 job_apps.db
 .DS_Store
+app/sample_data.py

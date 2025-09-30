@@ -3,5 +3,4 @@ pandas
 plotly
 streamlit-authenticator
 pyyaml
-playsound
-scikit-learn
+scikit-learn==1.5.*
