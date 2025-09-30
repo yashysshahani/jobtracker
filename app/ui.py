@@ -276,19 +276,21 @@ with tab_apps:
                     },
                     disabled=["id", "company", "role", "date_applied"])
         
+        export_df = df_edit.drop(columns=["delete"], errors="ignore")
+
+
+        st.download_button(
+            label="Download current view (CSV)",
+            data=export_df.to_csv(index=False).encode("utf-8"),
+            file_name="applications_current.csv",
+            mime="text/csv",
+            disabled=export_df.empty,
+        )
+        
     except KeyError:
         st.write("Add your first job!")
         
-    export_df = df_edit.drop(columns=["delete"], errors="ignore")
 
-
-    st.download_button(
-        label="Download current view (CSV)",
-        data=export_df.to_csv(index=False).encode("utf-8"),
-        file_name="applications_current.csv",
-        mime="text/csv",
-        disabled=export_df.empty,
-    )
 
 
     init_id_counter_if_missing(df_edit)
