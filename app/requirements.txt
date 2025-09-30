@@ -4,3 +4,5 @@ plotly
 streamlit-authenticator
 pyyaml
 playsound
+scikit-learn
+git
