@@ -374,7 +374,11 @@ with tab_analytics:
     col1, col2 = st.columns(2)
 
     # Weekly chart
-    weekly_apps = weekly_applications(df_edit)
+    try:
+        weekly_apps = weekly_applications(df_edit)
+
+    except NameError:
+        st.write("Add a job to view analytics")
 
     with col1:
         with st.container(border=True):
