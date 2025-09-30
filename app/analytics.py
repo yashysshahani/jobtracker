@@ -17,7 +17,11 @@ STOPWORDS = {
     "the","and","of","for","with","to","a","an","at","—","-","|","(",")"
 }
 
-
+try:
+    from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+except Exception:
+    CountVectorizer = None
+    TfidfVectorizer = None
 
 
 # Datetime helpers

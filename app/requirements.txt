@@ -1,8 +1,7 @@
-streamlit>=1.36
+streamlit>=1.49.1
 pandas
 plotly
 streamlit-authenticator
 pyyaml
 playsound
 scikit-learn
-git
