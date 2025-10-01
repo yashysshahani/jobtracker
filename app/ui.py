@@ -17,10 +17,13 @@ init_db()
 #seed_sample_row()
 
 # login feature:
-config = st.secrets.get("auth_config")  # may be None
-if not config:
-    st.info("Login not configured (missing `auth_config` in secrets). Running without auth.")
-else:
+authenticator = None
+name = "Guest"
+username = None
+auth_status = True 
+
+config = st.secrets.get("auth_config")
+if config:
     authenticator = stauth.Authenticate(
         config["credentials"],
         config["cookie"]["name"],
@@ -32,10 +35,10 @@ else:
         st.error("Username/password is incorrect"); st.stop()
     elif auth_status is None:
         st.info("Please log in"); st.stop()
-    authenticator.logout("Logout", "sidebar")
-    st.sidebar.write(f"Hi, {name}")
 
-authenticator.logout("Logout", "sidebar")
+
+if authenticator:
+    authenticator.logout("Logout", "sidebar")
 st.sidebar.write(f"Hi, {name}")
 
 st.set_page_config(page_title="TrackJob", layout="wide")
