@@ -17,23 +17,23 @@ init_db()
 #seed_sample_row()
 
 # login feature:
-config = st.secrets.get("auth_config", None)
-
-authenticator = stauth.Authenticate(
-    config["credentials"],
-    config["cookie"]["name"],
-    config["cookie"]["key"],
-    config["cookie"]["expiry_days"]
-)
-
-name, auth_status, username = authenticator.login("Login", "main")
-
-if auth_status is False:
-    st.error("Username or password is incorrect")
-    st.stop()
-elif auth_status is None:
-    st.info("Please log in")
-    st.stop()
+config = st.secrets.get("auth_config")  # may be None
+if not config:
+    st.info("Login not configured (missing `auth_config` in secrets). Running without auth.")
+else:
+    authenticator = stauth.Authenticate(
+        config["credentials"],
+        config["cookie"]["name"],
+        config["cookie"]["key"],
+        config["cookie"]["expiry_days"],
+    )
+    name, auth_status, username = authenticator.login("Login", "main")
+    if auth_status is False:
+        st.error("Username/password is incorrect"); st.stop()
+    elif auth_status is None:
+        st.info("Please log in"); st.stop()
+    authenticator.logout("Logout", "sidebar")
+    st.sidebar.write(f"Hi, {name}")
 
 authenticator.logout("Logout", "sidebar")
 st.sidebar.write(f"Hi, {name}")
