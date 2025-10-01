@@ -9,11 +9,36 @@ import plotly.express as px
 import numpy as np
 import datetime as dt
 import altair as alt
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 init_db()
 #seed_sample_row()
 
-st.set_page_config(page_title="Job App Tracker", layout="wide")
+# login feature:
+config = st.secrets.get("auth_config", None)
+
+authenticator = stauth.Authenticate(
+    config["credentials"],
+    config["cookie"]["name"],
+    config["cookie"]["key"],
+    config["cookie"]["expiry_days"]
+)
+
+name, auth_status, username = authenticator.login("Login", "main")
+
+if auth_status is False:
+    st.error("Username or password is incorrect")
+    st.stop()
+elif auth_status is None:
+    st.info("Please log in")
+    st.stop()
+
+authenticator.logout("Logout", "sidebar")
+st.sidebar.write(f"Hi, {name}")
+
+st.set_page_config(page_title="TrackJob", layout="wide")
 st.title("Track and log your job apps")
 
 tab_apps, tab_analytics = st.tabs(["Applications", "Analytics"])
@@ -71,7 +96,7 @@ def read_uploaded_csv(file):
     file.seek(0)
     return pd.read_csv(file, encoding="latin1", sep=None, engine="python")
 
-def apply_user_mapping(df_raw: pd.DataFrame, user_choice: dict[str,str]):
+def app_ly_user_mapping(df_raw: pd.DataFrame, user_choice: dict[str,str]):
     """
     Input:
     - df_raw: raw dataframe representing csv uploaded by user
